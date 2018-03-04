@@ -1,3 +1,9 @@
+// XOR neural network 
+// Author: Kevin Formosa (01/03/2018)
+// Credit: Based on work done Daniel Shiffman - Toy Neural Network P5 (http://youtube.com/thecodingtrain)
+
+// Neural network can have multiple hidden layers, defined in an array.
+
 ArrayList inputs;
 float[] outputs = { 0.01, 0.98, 0.98, 0.01 };
 NeuralNetwork nn;
@@ -10,6 +16,33 @@ int count;
 PFont font;
 
 static final int trainingPerFrame = 1000;
+
+void keyPressed() {
+  if (key == 'p') {
+    println();
+    println("Final weights and biases:");
+    nn.info();
+  }
+}
+
+void networkStatus() {  
+  float mse = 0.0;
+  float rmse;
+  
+  // Compute error for the current network status.
+  for (int i=0; i<inputs.size(); i++) {
+    float[] inp = (float[]) inputs.get(i);
+    resultArray = nn.predict(inp);
+    mse += sq(resultArray[0] - outputs[i]);    
+  }
+  
+  rmse = sqrt(mse/4.0);
+  
+  textFont(font);
+  fill(200);
+  text("Total iterations: " + count, 10, 40);
+  text("Root mean squared error: " + nfc(rmse,4), 10, 60); 
+}
 
 void setup() {  
   size(500, 500);
@@ -35,14 +68,6 @@ void setup() {
   // Create the neural network.
   int[] hiddenNodes = { 4, 4 };
   nn = new NeuralNetwork(2, hiddenNodes, 1, true);  
-}
-
-void keyPressed() {
-  if (key == 'p') {
-    println();
-    println("Final weights and biases:");
-    nn.info();
-  }
 }
 
 void draw() {
@@ -79,24 +104,4 @@ void draw() {
   if (count >= 1000000) {
     noLoop();
   }
-}
-
-void networkStatus() {  
-  float mse = 0.0;
-  float rmse;
-  
-  // Compute error for the current network status.
-  for (int i=0; i<inputs.size(); i++) {
-    float[] inp = (float[]) inputs.get(i);
-    resultArray = nn.predict(inp);
-    mse += sq(resultArray[0] - outputs[i]);    
-  }
-  
-  rmse = sqrt(mse/4.0);
-  
-  textFont(font);
-  fill(200);
-  text("Total iterations: " + count, 10, 40);
-  text("Root mean squared error: " + nfc(rmse,4), 10, 60);
-  
 }
