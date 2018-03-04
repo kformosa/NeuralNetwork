@@ -138,7 +138,7 @@ void networkStatus() {
     rect(200+(i%imageWidth)*5,(i/imageWidth)*5,5,5);    
   }
  
-  prediction = nn.predict(inputs); //<>//
+  prediction = nn.predict(inputs);
   guess = findMax(prediction);
   guessedChar = str(guess).charAt(0);
   confidence = (guess >= 0) ? prediction[guess] : -1;
@@ -267,5 +267,5 @@ void draw() {
   
   text("Keys:", 25, 360);
   text("  <t>rain, <a>utoCheck, <m>anualCheck, <r>esetTestStats,", 25, 375);
-  text("  <I>nitNetwork", 25, 390);
+  text("  <i>nitNetwork", 25, 390);
 }
