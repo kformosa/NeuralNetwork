@@ -10,7 +10,7 @@ class NeuralNetwork {
   static final int FUNC_SIGMOID = 1;
   static final int FUNC_TANH = 2;  
   
-  float learningRate = 0.05;
+  float learningRate = 0.1;
   
   boolean valid = false;  
   boolean debug = true;

@@ -134,8 +134,6 @@ void networkStatus() {
     value = testImages[i+(testImage*imageLength)];
     testImageValues[i] = value;    
     inputs[i] = normalize(value);
-    fill(value);
-    rect(200+(i%imageWidth)*5,(i/imageWidth)*5,5,5);    
   }
  
   prediction = nn.predict(inputs);
@@ -215,7 +213,7 @@ void setup() {
   
   inputs = new float[imageLength];
   targets = new float[outputNodes];
-  int[] hiddenLayers = { 16, 16 };
+  int[] hiddenLayers = { 32 };
   nn = new NeuralNetwork(imageLength, hiddenLayers, outputNodes, true);
 }
 
