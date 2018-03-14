@@ -33,10 +33,10 @@ class Matrix {
   }
  
    // Randomizing the matrix cells between a lower and an upper value.
-   void randomize(float _lower, float _upper) {
+   void randomize(float _lowerLimit, float _upperLimit) {
     for (int i=0; i<rows; i++) {
       for (int j=0; j<cols; j++) {
-        data[i][j] = random(_lower, _upper);
+        data[i][j] = random(_lowerLimit, _upperLimit);
       }
     }
   }
@@ -169,9 +169,9 @@ class Matrix {
   float tanh(float _value, boolean _derivative) {
     return _derivative ? 1 - (_value * _value)
                        : (float)Math.tanh(_value);
-  }
+  }  
   
-  // For debugging purposes.
+  // Used for debugging purposes only.
   void info() {
     for (float[] _rows : data) {
        for (float _n : _rows) {
@@ -179,5 +179,5 @@ class Matrix {
        }
        println();
     }
-  }
+  }  
 }

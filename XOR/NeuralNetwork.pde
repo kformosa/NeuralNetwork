@@ -21,6 +21,10 @@ class NeuralNetwork {
     hiddenNodes = _hiddenNodes;
     outputNodes = _outputNodes;
     
+    // Create array objects.    
+    hiddenWeights = new Matrix[hiddenLayers];
+    hiddenBias = new Matrix[hiddenLayers];
+        
     // Quick sanity check.
     if (inputNodes > 0 && hiddenLayers > 0 && outputNodes > 0) {
       valid = true;      
@@ -32,17 +36,12 @@ class NeuralNetwork {
   void initialize() {
     int previousLayerNodes;
     float limit;    
-    
-    // Create array objects.    
-    hiddenWeights = new Matrix[hiddenLayers];
-    hiddenBias = new Matrix[hiddenLayers];
-    
+        
     // Generate the weights and biases for the hidden layers.
     for (int i=0; i<hiddenLayers; i++) {
       previousLayerNodes = i == 0 ? inputNodes : hiddenNodes[i-1];      
       hiddenWeights[i] = new Matrix(hiddenNodes[i], previousLayerNodes);
-      hiddenBias[i] = new Matrix(hiddenNodes[i], 1);
-      
+      hiddenBias[i] = new Matrix(hiddenNodes[i], 1);      
       
       // Good random number range should be ± square root of nodes coming in this node.      
       limit = previousLayerNodes > 0 ? 1 / sqrt(previousLayerNodes) : 1;
@@ -60,7 +59,7 @@ class NeuralNetwork {
     
     limit = previousLayerNodes > 0 ? 1 / sqrt(previousLayerNodes) : 1;
     outputWeights.randomize(-limit, limit);
-    outputBias.randomize(-limit,limit);
+    outputBias.randomize(-limit, limit);
     
     // Debug information.
     if (debug) println("Output - Random limit: " + nfc(limit, 4));
@@ -150,6 +149,7 @@ class NeuralNetwork {
     learningRate = _learningRate;
   }
   
+  // Used for debugging purposes only.
   void info() {
     for (int i=0; i<hiddenLayers; i++) {
       println();      

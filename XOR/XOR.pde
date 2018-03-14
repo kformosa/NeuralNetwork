@@ -12,16 +12,50 @@ float x1, x2;
 float[] inputArray = new float[2];
 float[] resultArray;
 
+Utils utils = new Utils();
+
+boolean doTraining = false;
+
 int count;
 PFont font;
 
 static final int trainingPerFrame = 1000;
 
 void keyPressed() {
-  if (key == 'p') {
-    println();
-    println("Final weights and biases:");
-    nn.info();
+  switch (key) {
+    case 'p':
+      // Save neural network to disk.
+      utils.saveNeuralNetworkObject(nn);
+      
+      println();
+      println("Final weights and biases:");
+      nn.info();
+      break;
+      
+    case 't':
+      doTraining = true;
+      break;
+      
+    case 'l':
+      // Load and replace neural network from disk.
+      nn = utils.newNeuralNetworkFromFile();
+      
+      println();
+      println("Loaded weights and biases:");
+      nn.info();
+      break;
+  }
+}
+
+void doTraining() {
+  for (int i=0; i<=trainingPerFrame; i++) {
+    int pick = int(random(inputs.size()));
+    float[] input = (float[]) inputs.get(pick);
+    float[] target = new float[1];
+    target[0] = outputs[pick];
+    // Train the puppy.
+    nn.train(input, target);
+    count++;
   }
 }
 
@@ -71,15 +105,8 @@ void setup() {
 }
 
 void draw() {
-  for (int i=0; i<=trainingPerFrame; i++) {
-    int pick = int(random(inputs.size()));
-    float[] input = (float[]) inputs.get(pick);
-    float[] target = new float[1];
-    target[0] = outputs[pick];
-    // Train the puppy.
-    nn.train(input, target);
-    count++;
-  }
+  if (doTraining) 
+    doTraining();
   
   int resolution = 10;
   int rows = floor(height / resolution);
