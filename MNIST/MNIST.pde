@@ -19,7 +19,7 @@ static final int imageHeight = 28;
 static final int imageLength = imageWidth * imageHeight;
 static final int outputNodes = 10;
 static final int trainingPerFrame = 200;
-static final int testingPerFrame = 10;
+static final int testingPerFrame = 50;
 
 NeuralNetwork nn;
 
@@ -37,11 +37,17 @@ int testCorrect = 0;
 char guessedChar = ' ';
 float confidence = 0;
 float percent = 0.0;
+float recordPercent = 0.0;
 
 PFont font;
 boolean doTraining = true;
 boolean autoChecks = false;
 boolean manualCheck = false;
+boolean resetDone = false;
+
+Utils utils = new Utils();
+
+// Supporting methods start here.
 
 int[] loadFile(String _filename, int _offset, boolean _invert) {
   int value;
@@ -155,6 +161,18 @@ void networkStatus() {
   
   percent = ((float) testCorrect / (float) testCount) * 100.0;
   
+  if (testIterations == 3 && testImage == 9999) {
+    // Save highest ranking network.
+    if (percent > recordPercent) {
+      recordPercent = percent;
+      String filename = nfc(recordPercent,2).replace('.', '-');
+      utils.saveNeuralNetworkObject(nn, filename);
+    }
+        
+    // Build a new neural network and test again.    
+    resetAll();             
+  }
+  
   manualCheck = false;
 }
 
@@ -162,20 +180,25 @@ void resetAll() {
   // Debug information.
   println();
   println("Re-init of neural network...");
-  
+    
   trainImage = 0;
   trainIterations = 1;
+  
+  testImageValues = new int[imageLength];
   
   testIterations = 1;
   testImage = 0;
   testCorrect = 0;
-  testCount = 0;
-  percent = 0;
+  testCount = 0;    
+  
+  guessedChar = ' ';
+  confidence = 0.0;
   
   nn.initialize();         
   
   doTraining = true;
   autoChecks = false;
+  resetDone = true;
 }
 
 void keyPressed() {
@@ -203,6 +226,8 @@ void keyPressed() {
   }
 }
 
+// Actual processing sketch starts here.
+
 void setup() {  
   size(370,400);  
   noStroke();
@@ -219,6 +244,7 @@ void setup() {
 
 void draw() {
   background(100);
+  resetDone = false;
   
   // Train the neural network.
   if (doTraining) {
@@ -230,7 +256,8 @@ void draw() {
   // Test and report the network performance.
   if (autoChecks && ! manualCheck) {
     for (int x=0; x<=testingPerFrame; x++) {
-      networkStatus();
+      if (! resetDone)
+        networkStatus();
     }
   }   
   
@@ -243,9 +270,10 @@ void draw() {
   drawImage(trainImageValues, 25);
   drawImage(testImageValues, 200);
    
-  // Start checks automatically after the 5th training iteration.
-  if (trainIterations == 5 && trainImage == 0) {
+  // Start checks automatically after the 13th training iteration.
+  if (trainIterations == 13 && trainImage == 0) {
     autoChecks = true;
+    doTraining = false;
   }
     
   // Output information.
@@ -262,6 +290,7 @@ void draw() {
   text("Total: " + testCount, 200, 280);
   
   text("Accuracy: " + percent + " %", 200, 320);
+  text("Record: " + nfc(recordPercent,3) + " %", 200, 340);
   
   text("Keys:", 25, 360);
   text("  <t>rain, <a>utoCheck, <m>anualCheck, <r>esetTestStats,", 25, 375);
